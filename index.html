@@ -30,13 +30,13 @@
     <script>
     function getUserName() {
     var nameField = document.getElementById('nameField').value;
-    var result = document.getElementById('result');
+    var link = 'https://www.googleapis.com/books/v1/volumes?q=' + nameField +'&callback=handleResponse';
     
     if (nameField.length < 3) {
         result.textContent = 'Username must contain at least 3 characters';
         //alert('Username must contain at least 3 characters');
     } else {
-        result.textContent = 'https://www.googleapis.com/books/v1/volumes?q=' + nameField +'&callback=handleResponse';
+        result.textContent = link;
         //alert(nameField);
     }
 }
