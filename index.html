@@ -4,7 +4,20 @@
     <title>Books API Example</title>
   </head>
   <body>
-    <div id="content"></div>
+<div class='wrapper'>
+<form id='nameForm'>
+<div class='form-uname'>
+    <lable id='nameLable' for='nameField'>Create a username:</lable>
+    <input id='nameField' type='text' maxlength='25'></input>
+</div>
+<div class='form-sub'>
+    <button id='subButton' type='button'>Print your name!</button>
+</div>
+</form>
+
+<div>
+    <p id='result'></p></div>
+</div>
     <script>
       function handleResponse(response) {
       for (var i = 0; i < response.items.length; i++) {
