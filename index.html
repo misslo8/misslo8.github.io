@@ -4,14 +4,7 @@
     <title>Books API Example</title>
   </head>
   <body>
-<div class='wrapper'>
-<form onSubmit="return process();">
-URL: <input type="text" name="url" id="url"> <input type="submit" value="go">
-</form>
-
-<div>
-    <p id='result'></p></div>
-</div>
+    <div id="content"></div>
     <script>
       function handleResponse(response) {
       for (var i = 0; i < response.items.length; i++) {
@@ -21,8 +14,6 @@ URL: <input type="text" name="url" id="url"> <input type="submit" value="go">
       }
     }
     </script>
-
-  
-    <script src="https://www.googleapis.com/books/v1/volumes?q=" + document.getElementById("url").value + "&callback=handleResponse"></script>
+    <script src="https://www.googleapis.com/books/v1/volumes?q=harry+potter&callback=handleResponse"></script>
   </body>
 </html>
