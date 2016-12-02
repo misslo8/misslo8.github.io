@@ -49,11 +49,9 @@ function loadBestSellers (data) {
     var row = tbResult.insertRow(0);
     var cellRank = row.insertCell(0);
     var cellName = row.insertCell(1);
-    var cellPrevRank = row.insertCell(2);
-    var cellPrice = row.insertCell(3);
+    var cellPrice = row.insertCell(2);
     cellRank.innerHTML = "Rank";
     cellName.innerHTML = "Name"
-    cellPrevRank.innerHTML = "PrevRank"
     cellPrice.innerHTML = "Price"
   
   
@@ -63,12 +61,10 @@ function loadBestSellers (data) {
       //row.id = data.results[i].book_details[0].title;
       cellRank = row.insertCell(0);
       cellName = row.insertCell(1);
-      cellPrevRank = row.insertCell(2);
-      cellPrice = row.insertCell(3);
+      cellPrice = row.insertCell(2);
       cellRank.innerHTML = data.results[i].rank;
       cellName.innerHTML = data.results[i].book_details[0].title;
       callPriceAPI(data.results[i].book_details[0].title);
-      cellPrevRank.innerHTML = data.results[i].rank_last_week;
       cellPrice.id = data.results[i].book_details[0].title.replace(/ /g, '').toLowerCase();
       cellPrice.contentEditable = true;
     }
@@ -80,10 +76,11 @@ function loadBestSellers (data) {
 function getBestSeller () {
 
 	var category = document.getElementById("category").options[document.getElementById("category").selectedIndex].value;
+  var weeks = document.getElementById("weeks").value;
   var url = "https://api.nytimes.com/svc/books/v3/lists.json";
 	url += '?' + $.param({'api-key': "b144a9a75c75499c891d9e22111e4d61",
   'list' : category,
-  'weeks-on-list': 1,
+  'weeks-on-list': weeks,
   'sort-order': "ASC"});
 	$.ajax({url: url,method: 'GET',}).done(loadBestSellers).fail(throwErr);
 
@@ -133,5 +130,7 @@ function getNYTList () {
 
 <div id="content">
 </div>
+
+
   </body>
 </html>
