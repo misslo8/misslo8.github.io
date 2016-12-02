@@ -6,7 +6,7 @@
   <body>
 <div class='wrapper'>
 <form onSubmit="return process();">
-URL: <input type="text" name="url" id="url"> <input type="button" value="go">
+URL: <input type="text" name="url" id="url"> <input type="button" value="go" onclick="callAPI">
 </form>
 
 <div>
@@ -20,6 +20,10 @@ URL: <input type="text" name="url" id="url"> <input type="button" value="go">
         document.getElementById("content").innerHTML += "<br>" + item.volumeInfo.title;
       }
     }
+      
+      function callAPI() {
+        document.getElementById("url").value = "API"
+      }
     </script>
 
   
