@@ -92,7 +92,7 @@ function loadList (data) {
   for (var i = 0; i < data.num_results; i++) {
   	var category = document.createElement('option');
     category.text = data.results[i].list_name;
-    category.id = data.results[i].list_name_encoded;
+    category.value = data.results[i].list_name_encoded;
     categoryBox.appendChild(category);
 	}
 }
