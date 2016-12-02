@@ -5,22 +5,26 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   </head>
   <body>
-URL: <input type="Text" name="url" id="url"/> <input type="button" value="GO" onclick="callAPI()">
-<div id="content"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
 
   function onSuccess (response) {
-  
-  document.getElementById("content").innerHTML = ""
+	document.getElementById("content").innerHTML = ""
   
   for (var i = 0; i < response.items.length; i++) {
         var item = response.items[i];
+        try {
+        	var price = "   $ " + item.saleInfo.retailPrice.amount
+        } catch (err) {
+        	var price = "     OUT OF STOCK"
+        }
         // in production code, item.text should have the HTML entities escaped.
-        document.getElementById("content").innerHTML += "<br>" + item.volumeInfo.title;
+        document.getElementById("content").innerHTML += "<br>" + 
+        item.volumeInfo.title + price; //item.volumeInfo.saleInfo.retailPrice.amount;
       }
   }
   
-	function callAPI () {
+function callAPI () {
   
   	var param = document.getElementById("url").value
 		var newurl = "https://www.googleapis.com/books/v1/volumes";
@@ -28,6 +32,142 @@ URL: <input type="Text" name="url" id="url"/> <input type="button" value="GO" on
   }
   
 
+   function onReturn (response) {
+   	alert ("hi from return")
+  
+  }
+
+  
+  function callAWSAPI () {
+  var url = "https://api.nytimes.com/svc/books/v3/lists/names.json";
+url += '?' + $.param({
+  'api-key': "b144a9a75c75499c891d9e22111e4d61"
+});
+$.ajax({
+  url: url,
+  method: 'GET',
+}).done(onReturn).fail(function(err) {
+  throw err;
+});
+}
+
+   function onReturn (response) {
+   	alert ("hi from return")
+  
+  }
+
+function throwErr (err) {
+	throw err;
+}
+
+
+  
+function showPrice (data) {
+  var item = data.items[0];
+   var cell =document.getElementById(item.volumeInfo.title).insertCell(4); 		cell.innerHTML = item.saleInfo.retailPrice.amount;
+}
+
+
+function callPriceAPI (title) {
+		var url = "https://www.googleapis.com/books/v1/volumes";
+  	$.getJSON (url,{"q" : title}, showPrice);
+}
+
+function loadBestSellers (data) {
+  var content = document.getElementById("content");
+  content.innerHTML = ""
+  
+  if (data.num_results > 0) {
+  	var tbResult = document.createElement('TABLE');
+    tbResult.id = "rslt"
+    var row = tbResult.insertRow(0);
+    var cellRank = row.insertCell(0);
+    var cellName = row.insertCell(1);
+    var cellPrevRank = row.insertCell(2);
+    var cellPrice = row.insertCell(3);
+    cellRank.innerHTML = "Rank";
+    cellName.innerHTML = "Name"
+    cellPrevRank.innerHTML = "PrevRank"
+    cellPrice.innerHTML = "Price"
+  
+  
+    for (var i = 0; i < data.num_results; i++) {
+      var index = i + 1
+     	row = tbResult.insertRow(index);
+      row.id = data.results[i].book_details[0].title;
+      cellRank = row.insertCell(0);
+      cellName = row.insertCell(1);
+      cellPrevRank = row.insertCell(2);
+      cellPrice = row.insertCell(3);
+      cellRank.innerHTML = data.results[i].rank;
+      cellName.innerHTML = data.results[i].book_details[0].title;
+      callPriceAPI(data.results[i].book_details[0].title);
+      cellPrevRank.innerHTML = data.results[i].rank_last_week;
+      cellPrice.innerHTML = ""
+    }
+
+    content.appendChild(tbResult);
+  }
+}
+
+function getBestSeller () {
+
+	var category = document.getElementById("category").options[document.getElementById("category").selectedIndex].value;
+  var url = "https://api.nytimes.com/svc/books/v3/lists.json";
+	url += '?' + $.param({'api-key': "b144a9a75c75499c891d9e22111e4d61",
+  'list' : category,
+  'weeks-on-list': 1,
+  'sort-order': "ASC"});
+	$.ajax({url: url,method: 'GET',}).done(loadBestSellers).fail(throwErr);
+
+}
+
+function loadList (data) {
+	var categoryBox = document.getElementById("category");
+  
+  for (var i = 0; i < data.num_results; i++) {
+  	var category = document.createElement('option');
+    category.text = data.results[i].list_name;
+    category.id = data.results[i].list_name_encoded;
+    categoryBox.appendChild(category);
+	}
+}
+
+function getNYTList () {
+
+  var url = "https://api.nytimes.com/svc/books/v3/lists/names.json";
+	url += '?' + $.param({'api-key': "b144a9a75c75499c891d9e22111e4d61"});
+	$.ajax({url: url,method: 'GET',}).done(loadList).fail(throwErr);
+}
+
 </script>
+
+
+
+
+
+
+<p>
+  Find My Book - NYT BEST SELLERS / GOOGLE BOOK
+</p>
+
+<label id="Search">Click Start to search NYT best sellers</label> 
+<input type="button" value="START" onclick="getNYTList()">
+<br/><br/><br/><br/>
+<label>Category : </label>
+<select id="category">
+  <option>Select a category</option>
+</select>
+<label>Weeks on Best Seller Cahrt</label>
+<input type="Text" name="weeks" id="weeks"/>
+<br/><br/>
+<input type="button" value="SEARCH" onclick="getBestSeller()">
+<br/><br/><br/><br/>
+
+<div id="content">
+helllooooo
+</div>
+
+
   </body>
 </html>
