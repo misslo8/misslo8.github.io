@@ -2,31 +2,32 @@
 <html>
   <head>
     <title>Books API Example</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   </head>
   <body>
-<div class='wrapper'>
-<form onSubmit="return process();">
-URL: <input type="text" name="url" id="url"> <input type="button" value="go" onclick="callAPI">
-</form>
+URL: <input type="Text" name="url" id="url"/> <input type="button" value="GO" onclick="callAPI()">
+<div id="content"></div>
+<script>
 
-<div>
-    <p id='result'></p></div>
-</div>
-    <script>
-      function handleResponse(response) {
-      for (var i = 0; i < response.items.length; i++) {
+  function onSuccess (response) {
+  
+  document.getElementById("content").innerHTML = ""
+  
+  for (var i = 0; i < response.items.length; i++) {
         var item = response.items[i];
         // in production code, item.text should have the HTML entities escaped.
         document.getElementById("content").innerHTML += "<br>" + item.volumeInfo.title;
       }
-    }
-      
-      function callAPI() {
-        document.getElementById("url").value = "API"
-      }
-    </script>
-
+  }
   
-    <script src="https://www.googleapis.com/books/v1/volumes?q=" + document.getElementById("url").value + "&callback=handleResponse"></script>
+	function callAPI () {
+  
+  	var param = document.getElementById("url").value
+		var newurl = "https://www.googleapis.com/books/v1/volumes";
+  	$.getJSON (newurl,{"q" : param}, onSuccess);
+  }
+  
+
+</script>
   </body>
 </html>
