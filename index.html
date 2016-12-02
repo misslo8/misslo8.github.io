@@ -7,55 +7,6 @@
   <body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script>
-
-  function onSuccess (response) {
-	document.getElementById("content").innerHTML = ""
-  
-  for (var i = 0; i < response.items.length; i++) {
-        var item = response.items[i];
-        try {
-        	var price = "   $ " + item.saleInfo.retailPrice.amount
-        } catch (err) {
-        	var price = "     OUT OF STOCK"
-        }
-        // in production code, item.text should have the HTML entities escaped.
-        document.getElementById("content").innerHTML += "<br>" + 
-        item.volumeInfo.title + price; //item.volumeInfo.saleInfo.retailPrice.amount;
-      }
-  }
-  
-function callAPI () {
-  
-  	var param = document.getElementById("url").value
-		var newurl = "https://www.googleapis.com/books/v1/volumes";
-  	$.getJSON (newurl,{"q" : param}, onSuccess);
-  }
-  
-
-   function onReturn (response) {
-   	alert ("hi from return")
-  
-  }
-
-  
-  function callAWSAPI () {
-  var url = "https://api.nytimes.com/svc/books/v3/lists/names.json";
-url += '?' + $.param({
-  'api-key': "b144a9a75c75499c891d9e22111e4d61"
-});
-$.ajax({
-  url: url,
-  method: 'GET',
-}).done(onReturn).fail(function(err) {
-  throw err;
-});
-}
-
-   function onReturn (response) {
-   	alert ("hi from return")
-  
-  }
-
 function throwErr (err) {
 	throw err;
 }
@@ -64,7 +15,22 @@ function throwErr (err) {
   
 function showPrice (data) {
   var item = data.items[0];
-   var cell =document.getElementById(item.volumeInfo.title).insertCell(4); 		cell.innerHTML = item.saleInfo.retailPrice.amount;
+  var name = item.volumeInfo.title.replace(/ /g, '').toLowerCase();
+  try {
+        var price = item.saleInfo.retailPrice.amount;
+  } catch (err) {
+        var price = ""
+  }
+   var cell = document.getElementById(name);
+   
+   if (cell) {
+     try {
+        var price = "$" + item.saleInfo.retailPrice.amount;
+     } catch (err) {
+        var price = " NA"
+     }
+     cell.innerHTML = price;
+   }
 }
 
 
@@ -94,7 +60,7 @@ function loadBestSellers (data) {
     for (var i = 0; i < data.num_results; i++) {
       var index = i + 1
      	row = tbResult.insertRow(index);
-      row.id = data.results[i].book_details[0].title;
+      //row.id = data.results[i].book_details[0].title;
       cellRank = row.insertCell(0);
       cellName = row.insertCell(1);
       cellPrevRank = row.insertCell(2);
@@ -103,7 +69,8 @@ function loadBestSellers (data) {
       cellName.innerHTML = data.results[i].book_details[0].title;
       callPriceAPI(data.results[i].book_details[0].title);
       cellPrevRank.innerHTML = data.results[i].rank_last_week;
-      cellPrice.innerHTML = ""
+      cellPrice.id = data.results[i].book_details[0].title.replace(/ /g, '').toLowerCase();
+      cellPrice.contentEditable = true;
     }
 
     content.appendChild(tbResult);
@@ -165,9 +132,6 @@ function getNYTList () {
 <br/><br/><br/><br/>
 
 <div id="content">
-helllooooo
 </div>
-
-
   </body>
 </html>
